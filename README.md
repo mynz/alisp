@@ -1,1 +1,1 @@
-An implement of LISP language
+Implementation of LISP/scheme language
