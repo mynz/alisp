@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"fmt"
+	// "fmt"
 	"io"
 	"text/scanner"
 )
@@ -24,5 +24,6 @@ func New(r io.Reader) *Lex {
 }
 
 func (lex *Lex) Scan() {
-	fmt.Println("Scan")
+	// fmt.Println("Scan")
+	lex.Token = lex.Scanner.Scan()
 }
