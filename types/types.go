@@ -66,3 +66,26 @@ func (p *Pair) IsList() bool {
 		}
 	}
 }
+
+func (p *Pair) Append(exp Expression) *Pair {
+	pp := p
+	for {
+		if pp.IsNull() {
+			break
+		}
+		pp = pp.Cdr.(*Pair)
+	}
+	pp.Car = exp
+	pp.Cdr = &Pair{}
+	return pp
+}
+
+func NewList(args ...Expression) *Pair {
+	// In normal, p is prefer to be defined by var statement because of no allocation.
+	// But in this case, for empty list should be return empty pair.
+	p := &Pair{}
+	for i := len(args) - 1; i >= 0; i-- {
+		p = &Pair{args[i], p}
+	}
+	return p
+}
