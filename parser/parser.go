@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"errors"
 	"io"
+	"strconv"
 	"text/scanner"
 
 	"github.com/mynz/alisp/lexer"
@@ -74,4 +76,7 @@ func (p *Parser) Parse() (exps types.Expression, err error) {
 		}
 		return types.Symbol(token), nil
 	}
+
+	// dummy return. no run here.
+	return types.Symbol(token), nil
 }
