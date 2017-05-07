@@ -51,6 +51,19 @@ func TestParserRecursive(t *testing.T) {
 }
 
 func TestParserQuote(t *testing.T) {
+	r := strings.NewReader("'hello")
+	parser := New(lexer.New(r))
+	expected := types.Symbol("hello")
+	actual, err := parser.Parse()
+	if err != nil {
+		t.Fatalf("parser failed: %s", err)
+	}
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("expression is not expected. %v", actual)
+	}
+}
+
+func TestParserQuoteList(t *testing.T) {
 	r := strings.NewReader("'(1 2)")
 	parser := New(lexer.New(r))
 	expected := types.NewList(types.Number(1), types.Number(2))
