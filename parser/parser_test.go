@@ -75,3 +75,17 @@ func TestParserQuoteList(t *testing.T) {
 		t.Fatalf("expression is not expected. %v", actual)
 	}
 }
+
+func TestParserQuoteNumber(t *testing.T) {
+	r := strings.NewReader("'123")
+	parser := New(lexer.New(r))
+	expected := types.Number(123)
+	actual, err := parser.Parse()
+	if err != nil {
+		t.Fatalf("parser failed: %s", err)
+	}
+
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("expression is not expected. %v, but: %v", expected, actual)
+	}
+}
