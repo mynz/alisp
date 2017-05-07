@@ -58,6 +58,12 @@ func (p *Parser) Parse() (exps types.Expression, err error) {
 			}
 			return types.NewList(tokens...), nil
 		}
+		// TODO: if not start with (, it assume string.
+		t, err := p.lex.Next()
+		if err != nil {
+			return nil, err
+		}
+		return types.Symbol(t), nil
 	case "(":
 		// start s-expression. Parse as list.
 		return p.parseList()
