@@ -6,6 +6,7 @@ import (
 	"github.com/mynz/alisp/types"
 )
 
+// evalDefine evaluate (define ...) style expression.
 func evalDefine(exps []types.Expression, env *Env) (types.Expression, error) {
 	if len(exps) < 2 {
 		return nil, errors.New("define clause must have symbol and body")
