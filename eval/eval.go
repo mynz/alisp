@@ -65,3 +65,15 @@ func evalPredicate(exp types.Expression, env *Env) (types.Boolean, error) {
 	}
 	return bb, nil
 }
+
+func evalBegin(env *Env, exps ...types.Expression) (types.Expression, error) {
+	var lastExp types.Expression
+	for _, beginExp := range exps {
+		l, err := Eval(beginExp, env)
+		if err != nil {
+			return nil, err
+		}
+		lastExp = l
+	}
+	return lastExp, nil
+}
