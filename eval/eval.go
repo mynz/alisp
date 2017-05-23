@@ -3,6 +3,7 @@ package eval
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"github.com/mynz/alisp/types"
 )
@@ -76,4 +77,24 @@ func evalBegin(env *Env, exps ...types.Expression) (types.Expression, error) {
 		lastExp = l
 	}
 	return lastExp, nil
+}
+
+// evalLoad evaluates (load "file.scm") style definition.
+// loading file and evaluate it.
+func evalLoad(path string, env *Env) (types.Expression, error) {
+	cur, err := env.Get("#current-load-path")
+	if err != nil {
+		return nil, err
+	}
+	// if path is set, search from current directory.
+	if p := fmt.Sprintf("%s", cur); p != "" {
+		if !strings.hasPrefix(path, "/") {
+			path = filepath.Join(filepath.Dir(p), path)
+		}
+	}
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+	return EvalFile(abs, env)
 }
