@@ -98,3 +98,20 @@ func evalLoad(path string, env *Env) (types.Expression, error) {
 	}
 	return EvalFile(abs, env)
 }
+
+func evalApplication(env *Env, operator types.Expression, operands ...types.Expression) (types.Expression, error) {
+	exps := make([]types.Expression, 0, len(operands)-1)
+	for _, operand := range operands {
+		exp, err := Eval(operand, env)
+		if err != nil {
+			return nil, err
+		}
+		exp = append(exps, exp)
+	}
+
+	fn, err := Eval(operator, env)
+	if err != nil {
+		return nil, err
+	}
+	return Apply(fn, exps)
+}
