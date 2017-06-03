@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/mynz/alisp/types"
 )
@@ -88,7 +89,7 @@ func evalLoad(path string, env *Env) (types.Expression, error) {
 	}
 	// if path is set, search from current directory.
 	if p := fmt.Sprintf("%s", cur); p != "" {
-		if !strings.hasPrefix(path, "/") {
+		if !strings.HasPrefix(path, "/") {
 			path = filepath.Join(filepath.Dir(p), path)
 		}
 	}
@@ -114,4 +115,48 @@ func evalApplication(env *Env, operator types.Expression, operands ...types.Expr
 		return nil, err
 	}
 	return Apply(fn, exps)
+}
+
+func Eval(exp types.Expression, env *Env) (types.Expression, error) {
+	switch t := exp.(type) {
+	case types.Boolean, types.Number, *types.Pair, string:
+		return t, nil
+	case types.Symbol:
+		e, err := env.Get(t)
+		if err != nil {
+			return nil, err
+		}
+		return e, nil
+	case []types.Expression:
+		if len(t) == 0 {
+			return &types.Pair{}, nil
+		}
+
+		switch t[0] {
+		case types.Symbol("define"):
+			return evalDefine(t, env)
+		case types.Symbol("if"):
+			if len(t) < 4 {
+				return nil, errors.New("syntax error: if clause must be (if prediction consequent alternative) style")
+			}
+			return evalIf(t[1], t[2], t[3], env)
+		case types.Symbol("cond"):
+			if len(t) < 2 {
+				return nil, errors.New("syntax error: cond clause must be (cond prediction consequent alternative) style")
+			}
+			return evalCond(t, env)
+		case types.Symbol("begin"):
+			return evalBegin(env, t[1:]...)
+		case types.Symbol("load"):
+			path, ok := t[1].(stirng)
+			if !ok {
+				return nil, errors.New("syntax error: args of load should be string")
+			}
+			return evalLoad(path, env)
+		default:
+			return evalApplication(env, t[0], t[1:]...)
+		}
+	default:
+		return nil, fmt.Errorf("unknown expression type -- %v", exp)
+	}
 }

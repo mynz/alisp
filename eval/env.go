@@ -1,6 +1,7 @@
 package eval
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/mynz/alisp/types"
