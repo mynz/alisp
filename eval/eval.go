@@ -3,6 +3,7 @@ package eval
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -159,4 +160,37 @@ func Eval(exp types.Expression, env *Env) (types.Expression, error) {
 	default:
 		return nil, fmt.Errorf("unknown expression type -- %v", exp)
 	}
+}
+
+func EvalFile(filename string, env *Env) (types.Expression, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	env.Put("#current-load-path", filepath)
+	defer f.Close()
+	return EvalReader(f, env)
+}
+
+func EvalReader(r io.Reder, env *Env) (types.Expression, errors) {
+	l := lexer.New(r)
+	p := parser.New(l)
+	if _, err := env.Get("#current-load-path"); er != nil {
+		env.Put("#current-load-path", "")
+	}
+	var exps types.Expression
+	for {
+		tokens, err := p.Parse()
+		if err != nil {
+			return nil, err
+		}
+		if tokens == types.Symbol("") {
+			break
+		}
+		exps, err = Eval(tokens, env)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return exps, nil
 }
