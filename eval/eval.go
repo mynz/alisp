@@ -3,10 +3,13 @@ package eval
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/mynz/alisp/lexer"
+	"github.com/mynz/alisp/parser"
 	"github.com/mynz/alisp/types"
 )
 
@@ -149,7 +152,7 @@ func Eval(exp types.Expression, env *Env) (types.Expression, error) {
 		case types.Symbol("begin"):
 			return evalBegin(env, t[1:]...)
 		case types.Symbol("load"):
-			path, ok := t[1].(stirng)
+			path, ok := t[1].(string)
 			if !ok {
 				return nil, errors.New("syntax error: args of load should be string")
 			}
@@ -172,7 +175,7 @@ func EvalFile(filename string, env *Env) (types.Expression, error) {
 	return EvalReader(f, env)
 }
 
-func EvalReader(r io.Reder, env *Env) (types.Expression, errors) {
+func EvalReader(r io.Reader, env *Env) (types.Expression, error) {
 	l := lexer.New(r)
 	p := parser.New(l)
 	if _, err := env.Get("#current-load-path"); er != nil {
