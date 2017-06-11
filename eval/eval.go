@@ -184,6 +184,7 @@ func EvalReader(r io.Reder, env *Env) (types.Expression, errors) {
 		if err != nil {
 			return nil, err
 		}
+		// TODO: should handle unknown token.
 		if tokens == types.Symbol("") {
 			break
 		}
@@ -193,4 +194,28 @@ func EvalReader(r io.Reder, env *Env) (types.Expression, errors) {
 		}
 	}
 	return exps, nil
+}
+
+func Apply(procedure types.Expression, args []types.Expression) (types.Expression, error) {
+	switch p := procedure.(type) {
+	case Lambda:
+		env := &Env{m: make(Frame), parent: p.Env}
+		env.Setup()
+		switch lambdaArgs := p.Args.(type) {
+		case []types.Expression:
+			if len(lambdaArgs) != len(args) {
+				return nil, errors.New("give args is not match with lambda args")
+			}
+			for i, arg := range lambdaArgs {
+				env.Put(arg.(types.Symbol), args[i])
+			}
+		default:
+			env.Put(lambdaArgs.(types.Symbol), lambdaArgs)
+		}
+		return Eval(p.Body, env)
+	case func(...types.Expression) (types.Expression, error):
+		return p(args...)
+	default:
+		return nil, fmt.Errorf("unknown procedure type -- %v", procedure)
+	}
 }
