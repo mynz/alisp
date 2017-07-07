@@ -53,3 +53,7 @@ func Cdr(args ...types.Expression) (types.Expression, error) {
 	}
 	return a.Cdr, nil
 }
+
+func Cons(args ...types.Expression) (types.Expression, error) {
+	return &types.Pair{Car: args[0], Cdr: args[1]}, nil
+}
