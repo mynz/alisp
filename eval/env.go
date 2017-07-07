@@ -22,6 +22,12 @@ func NewEnv() *Env {
 }
 
 func (e *Env) Extend(frame Frame) {
+	for s, exp := range frame {
+		e.Put(s, exp)
+	}
+}
+
+func (e *Env) Setup() {
 	e.Extend(NewPrimitiveProcFrame())
 	e.LoadStandardLibrary()
 }
@@ -165,7 +171,7 @@ func (e *Env) Put(s types.Symbol, exp types.Expression) {
 	e.m[s] = exp
 }
 
-func (e *Env) Get(s types.Symbol, exp types.Expression) {
+func (e *Env) Get(s types.Symbol) (types.Expression, error) {
 	e.RLock()
 	defer e.RUnlock()
 	v, ok := e.m[s]

@@ -72,6 +72,24 @@ func evalPredicate(exp types.Expression, env *Env) (types.Boolean, error) {
 	return bb, nil
 }
 
+func evalCond(exps []types.Expression, env *Env) (types.Expression, error) {
+	for _, operand := range exps[1:] {
+		tt, ok := operand.([]types.Expression)
+		if !ok {
+			return nil, errors.New("cond clause must have expression")
+		}
+		if tt[0] == types.Symbol("else") {
+			return Eval(tt[1], env)
+		}
+		if bb, err := evalPredicate(tt[0], env); err != nil {
+			return nil, err
+		} else if bb {
+			return Eval(tt[1], env)
+		}
+	}
+	return nil, nil
+}
+
 func evalBegin(env *Env, exps ...types.Expression) (types.Expression, error) {
 	var lastExp types.Expression
 	for _, beginExp := range exps {
@@ -170,7 +188,7 @@ func EvalFile(filename string, env *Env) (types.Expression, error) {
 	if err != nil {
 		return nil, err
 	}
-	env.Put("#current-load-path", filepath)
+	env.Put("#current-load-path", filename)
 	defer f.Close()
 	return EvalReader(f, env)
 }
@@ -178,7 +196,7 @@ func EvalFile(filename string, env *Env) (types.Expression, error) {
 func EvalReader(r io.Reader, env *Env) (types.Expression, error) {
 	l := lexer.New(r)
 	p := parser.New(l)
-	if _, err := env.Get("#current-load-path"); er != nil {
+	if _, err := env.Get("#current-load-path"); err != nil {
 		env.Put("#current-load-path", "")
 	}
 	var exps types.Expression
