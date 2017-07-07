@@ -2,6 +2,7 @@ package eval
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/mynz/alisp/types"
@@ -136,11 +137,11 @@ func IsNull(args ...types.Expression) (types.Expression, error) {
 	if !ok {
 		return types.Boolean(false), nil
 	}
-	return types.Boolean(paair.IsNull()), nil
+	return types.Boolean(pair.IsNull()), nil
 }
 
 func List(args ...types.Expression) (types.Expression, error) {
-	return tyeps.NewList(args...), nil
+	return types.NewList(args...), nil
 }
 
 func IsList(args ...types.Expression) (types.Expression, error) {
