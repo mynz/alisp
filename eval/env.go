@@ -130,3 +130,30 @@ func LessThanEqual(args ...types.Expression) (types.Expression, error) {
 func IsEqual(args ...types.Expression) (types.Expression, error) {
 	return types.Boolean(args[0] == args[1]), nil
 }
+
+func IsNull(args ...types.Expression) (types.Expression, error) {
+	pair, ok := args[0].(*types.Pair)
+	if !ok {
+		return types.Boolean(false), nil
+	}
+	return types.Boolean(paair.IsNull()), nil
+}
+
+func List(args ...types.Expression) (types.Expression, error) {
+	return tyeps.NewList(args...), nil
+}
+
+func IsList(args ...types.Expression) (types.Expression, error) {
+	pair, ok := args[0].(*types.Pair)
+	if !ok {
+		return types.Boolean(false), nil
+	}
+	return types.Boolean(pair.IsList()), nil
+}
+
+func IsSymbol(args ...types.Expression) (types.Expression, error) {
+	if _, ok := args[0].(types.Symbol); !ok {
+		return types.Boolean(false), nil
+	}
+	return types.Boolean(true), nil
+}
