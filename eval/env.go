@@ -157,3 +157,38 @@ func IsSymbol(args ...types.Expression) (types.Expression, error) {
 	}
 	return types.Boolean(true), nil
 }
+
+func (e *Env) Put(s types.Symbol, exp types.Expression) {
+	e.Lock()
+	defer e.Unlock()
+	e.m[s] = exp
+}
+
+func (e *Env) Get(s types.Symbol, exp types.Expression) {
+	e.RLock()
+	defer e.RUnlock()
+	v, ok := e.m[s]
+	if !ok {
+		if e.parent != nil {
+			return e.parent.Get(s)
+		}
+		// if symbol not found, return itself
+		return s, nil
+	}
+	return v, nil
+}
+
+func (e *Env) Remove(s types.Symbol, exp types.Expression) {
+	e.Lock()
+	defer e.Unlock()
+	delete(e.m, s)
+}
+
+type Lambda struct {
+	// Args are temporary parameters
+	Args types.Expression
+	// Body is expression to evalute
+	Body types.Expression
+	// Env is environment for evaluate this lambda function
+	Env *Env
+}
