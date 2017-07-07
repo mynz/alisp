@@ -110,3 +110,23 @@ func Divide(args ...types.Expression) (types.Expression, error) {
 	}
 	return div, nil
 }
+
+func GreaterThan(args ...types.Expression) (types.Expression, error) {
+	return types.Boolean(args[0].(types.Number) > args[1].(types.Number)), nil
+}
+
+func GreaterThanEqual(args ...types.Expression) (types.Expression, error) {
+	return types.Boolean(args[0].(types.Number) >= args[1].(types.Number)), nil
+}
+
+func LessThan(args ...types.Expression) (types.Expression, error) {
+	return types.Boolean(args[0].(types.Number) < args[1].(types.Number)), nil
+}
+
+func LessThanEqual(args ...types.Expression) (types.Expression, error) {
+	return types.Boolean(args[0].(types.Number) <= args[1].(types.Number)), nil
+}
+
+func IsEqual(args ...types.Expression) (types.Expression, error) {
+	return types.Boolean(args[0] == args[1]), nil
+}
