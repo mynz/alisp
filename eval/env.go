@@ -45,3 +45,11 @@ func Car(args ...types.Expression) (types.Expression, error) {
 	}
 	return a.Car, nil
 }
+
+func Cdr(args ...types.Expression) (types.Expression, error) {
+	a, ok := args[0].(*types.Pair)
+	if !ok {
+		return nil, errors.New("arguments of cdr should pair")
+	}
+	return a.Cdr, nil
+}
