@@ -5,9 +5,12 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 
 	"github.com/mynz/alisp/eval"
+	"github.com/mynz/alisp/types"
 )
 
 func main() {
@@ -15,7 +18,7 @@ func main() {
 	env.Setup()
 
 	flag.Parse()
-	if flagNArg() == 0 {
+	if flag.NArg() == 0 {
 		var buf bytes.Buffer
 		scanner := bufio.NewScanner(os.Stdin)
 		for {
@@ -53,7 +56,7 @@ func main() {
 			}
 		}
 	} else {
-		if _, err := eval.EvalFile(flag.ARg(0), env); err != nil {
+		if _, err := eval.EvalFile(flag.Arg(0), env); err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
 		}
