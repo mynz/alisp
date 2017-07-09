@@ -41,7 +41,25 @@ func (e *Env) LoadStandardLibrary() error {
 
 func NewPrimitiveProcFrame() Frame {
 	return Frame{
-		"car": Car,
+		"car":     Car,
+		"cdr":     Cdr,
+		"cons":    Cons,
+		"print":   Print,
+		"+":       Add,
+		"-":       Subtract,
+		"*":       Multiply,
+		"/":       Divide,
+		">":       GreaterThan,
+		"<":       LessThan,
+		">=":      GreaterThanEqual,
+		"<=":      LessThanEqual,
+		"eq?":     IsEqual,
+		"=":       IsEqual,
+		"null?":   IsNull,
+		"list":    List,
+		"list?":   IsList,
+		"string?": IsString,
+		"symbol?": IsSymbol,
 	}
 }
 
@@ -156,6 +174,13 @@ func IsList(args ...types.Expression) (types.Expression, error) {
 		return types.Boolean(false), nil
 	}
 	return types.Boolean(pair.IsList()), nil
+}
+
+func IsString(args ...types.Expression) (types.Expression, error) {
+	if _, ok := args[0].(string); !ok {
+		return types.Boolean(false), nil
+	}
+	return types.Boolean(true), nil
 }
 
 func IsSymbol(args ...types.Expression) (types.Expression, error) {
