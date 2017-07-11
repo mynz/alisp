@@ -235,6 +235,7 @@ func Apply(procedure types.Expression, args []types.Expression) (types.Expressio
 		}
 		return Eval(p.Body, env)
 	case func(...types.Expression) (types.Expression, error):
+		// primitive procedure
 		return p(args...)
 	default:
 		return nil, fmt.Errorf("unknown procedure type -- %v", procedure)
