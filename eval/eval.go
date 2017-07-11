@@ -129,7 +129,7 @@ func evalApplication(env *Env, operator types.Expression, operands ...types.Expr
 		if err != nil {
 			return nil, err
 		}
-		exp = append(exps, exp)
+		exps = append(exps, exp)
 	}
 
 	fn, err := Eval(operator, env)
